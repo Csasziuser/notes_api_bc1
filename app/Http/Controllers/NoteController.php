@@ -10,9 +10,11 @@ class NoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $notes = $request->user()->notes;
+
+        return response()->json($notes,200, options: JSON_UNESCAPED_UNICODE);
     }
 
     /**
@@ -20,30 +22,18 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'title' => 'required|string',
+            'content' => 'required|string'
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Note $note)
-    {
-        //
-    }
+        $request->user()->notes()->create([
+            'title' => $request["title"],
+            'content' => $request["content"]
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Note $note)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Note $note)
-    {
-        //
+        return response()->json(
+            ['message' => 'Jegyzet sikeresen mentve!'],
+            201,options:JSON_UNESCAPED_UNICODE);
     }
 }
